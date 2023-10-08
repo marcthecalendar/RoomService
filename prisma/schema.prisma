@@ -7,3 +7,39 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model bed {
+  id      Int  @id(map: "bed_pk") @default(autoincrement())
+  room_id Int
+  number  Int
+  room    room @relation(fields: [room_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "bed_room_id_fk")
+}
+
+model building {
+  id    Int     @id(map: "building_pk") @default(autoincrement())
+  name  String
+  floor floor[]
+}
+
+model floor {
+  id          Int      @id(map: "floor_pk") @default(autoincrement())
+  building_id Int
+  number      Int
+  building    building @relation(fields: [building_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "floor_building_id_fk")
+  suite       suite[]
+}
+
+model room {
+  id       Int   @id(map: "room_pk") @default(autoincrement())
+  suite_id Int
+  number   Int
+  bed      bed[]
+  suite    suite @relation(fields: [suite_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "room_suite_id_fk")
+}
+
+model suite {
+  id       Int    @id(map: "suite_pk") @default(autoincrement())
+  floor_id Int
+  number   Int
+  room     room[]
+  floor    floor  @relation(fields: [floor_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "suite_floor_id_fk")
+}
